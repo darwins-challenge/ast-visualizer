@@ -4,7 +4,10 @@
   "description": "An Elm project visualizing moonlander AST",
   "main": "src/Main.elm",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "install": "./node_modules/.bin/elm package install",
+      "reactor": "./node_modules/.bin/elm reactor",
+      "make": "./node_modules/.bin/elm make src/Main.elm --output=visualize-ast.js"
   },
   "repository": {
     "type": "git",
