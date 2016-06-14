@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/darwins-challenge/ast-visualizer/issues"
   },
-  "homepage": "https://github.com/darwins-challenge/ast-visualizer#readme"
+  "homepage": "https://github.com/darwins-challenge/ast-visualizer#readme",
+  "devDependencies": {
+    "elm": "^0.17.0"
+  }
 }
