@@ -6,7 +6,8 @@ import Html.App exposing (beginnerProgram)
 
 main =
   beginnerProgram
-    { model = model
+    {
+      model = model
     , update = update
     , view = view
     }
@@ -57,11 +58,22 @@ type Command =
   | Thrust
 
 
-type alias Model = String
+type alias Model =
+  {
+    message : String
+  , program : Program
+  }
 
+
+init : String -> Model
+init message =
+  {
+    message = message
+  , program = Command Skip
+  }
 
 model : Model
-model = "Hello, World!"
+model = init "Hello, World!"
 
 
 -- UPDATE
@@ -81,4 +93,4 @@ update message model =
 
 view : Model -> Html Message
 view model =
-  text model
+  text model.message
