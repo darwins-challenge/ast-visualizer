@@ -1,0 +1,24 @@
+{
+  "name": "ast-visualizer",
+  "version": "1.0.0",
+  "description": "An Elm project visualizing moonlander AST",
+  "main": "src/Main.elm",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darwins-challenge/ast-visualizer.git"
+  },
+  "keywords": [
+    "elm",
+    "moonlander",
+    "AST"
+  ],
+  "author": "Daan van Berkel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/darwins-challenge/ast-visualizer/issues"
+  },
+  "homepage": "https://github.com/darwins-challenge/ast-visualizer#readme"
+}
