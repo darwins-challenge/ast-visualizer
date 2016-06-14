@@ -60,20 +60,18 @@ type Command =
 
 type alias Model =
   {
-    message : String
-  , program : Program
+    program : Program
   }
 
 
-init : String -> Model
-init message =
+init : Program -> Model
+init program =
   {
-    message = message
-  , program = Command Skip
+    program = program 
   }
 
 model : Model
-model = init "Hello, World!"
+model = init (Command Skip)
 
 
 -- UPDATE
@@ -93,4 +91,4 @@ update message model =
 
 view : Model -> Html Message
 view model =
-  text model.message
+  text (toString model.program)
