@@ -2,7 +2,7 @@ module Ast exposing (..)
 
 import Html exposing (Html, text)
 import Html.App exposing (beginnerProgram)
-
+import Random exposing (Generator, Seed, step, initialSeed, map, int, float)
 
 main =
   beginnerProgram
@@ -58,20 +58,67 @@ type Command =
   | Thrust
 
 
+intToSensor : Int -> Sensor
+intToSensor n =
+  case n of
+    1 -> X
+
+    2 -> Y
+
+    3 -> Vx
+
+    4 -> Vy
+
+    5 -> W
+
+    6 -> O
+
+    _ -> Fuel
+
+
+sensorGenerator : Generator Sensor
+sensorGenerator = map intToSensor (int 1 7)
+
+
+intToCommand : Int -> Command
+intToCommand n =
+  case n of
+    1 -> Left
+
+    2 -> Right
+
+    3 -> Thrust
+
+    _ -> Skip
+
+
+commandGenerator : Generator Command
+commandGenerator = map intToCommand (int 1 4)
+
+
 type alias Model =
   {
     program : Program
+  , seed : Seed
   }
 
 
-init : Program -> Model
-init program =
-  {
-    program = program 
-  }
+init : Int -> Model
+init n =
+  let
+    seed = initialSeed n
+
+    (command, seed') = step commandGenerator seed
+
+    program = Command command
+  in
+    {
+      program = program
+    , seed = seed'
+    }
 
 model : Model
-model = init (Command Skip)
+model = init 0
 
 
 -- UPDATE
