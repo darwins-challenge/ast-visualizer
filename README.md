@@ -37,6 +37,8 @@ To start it run
 npm run reactor
 ```
 
+and open [http://localhost:8000/src/Main.elm](http://localhost:8000/src/Main.elm)
+
 #### Make
 To create a compiled version of all the Elm files run
 
