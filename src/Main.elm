@@ -3,7 +3,7 @@ module Ast exposing (..)
 import Html exposing (Html, text, div, button)
 import Html.App exposing (beginnerProgram)
 import Html.Events exposing (onClick)
-import Random exposing (Generator, Seed, step, initialSeed, map, int, float, pair, andThen)
+import Random exposing (Generator, Seed, step, initialSeed, map, map3, int, float, pair, andThen)
 
 main : Platform.Program Never
 main =
@@ -58,6 +58,29 @@ type Command =
   | Left
   | Right
   | Thrust
+
+
+programGenerator : Generator Program
+programGenerator =
+  let
+    ifGenerator : Generator Program
+    ifGenerator =
+      let
+        create : Condition -> Program -> Program -> Program
+        create condition left right =
+          If condition left right
+      in
+        map3 create conditionGenerator programGenerator programGenerator
+
+
+    selectProgramGenerator : Int -> Generator Program
+    selectProgramGenerator n =
+      case n of
+        1 -> ifGenerator
+
+        _ -> map (\command -> Command command) commandGenerator
+  in
+    (int 1 3) `andThen` selectProgramGenerator
 
 
 conditionGenerator : Generator Condition
