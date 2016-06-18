@@ -2,7 +2,7 @@ module Ast exposing (..)
 
 import Html exposing (Html, text)
 import Html.App exposing (beginnerProgram)
-import Random exposing (Generator, Seed, step, initialSeed, map, int, float)
+import Random exposing (Generator, Seed, step, initialSeed, map, int, float, pair, andThen)
 
 main =
   beginnerProgram
@@ -56,6 +56,63 @@ type Command =
   | Left
   | Right
   | Thrust
+
+
+expressionGenerator : Generator Expression
+expressionGenerator =
+  let
+    floatToConstant : Float -> Expression
+    floatToConstant f = Constant f
+
+    constantGenerator : Generator Expression
+    constantGenerator = map floatToConstant (float 0.0 1.0)
+
+    sensorToSensorExpression : Sensor -> Expression
+    sensorToSensorExpression sensor = Sensor sensor
+
+    sensorExpressionGenerator : Generator Expression
+    sensorExpressionGenerator = map sensorToSensorExpression sensorGenerator
+
+    pairOfExpressionsToPlusExpression : (Expression, Expression) -> Expression
+    pairOfExpressionsToPlusExpression (left, right) = Plus left right
+
+    plusGenerator : Generator Expression
+    plusGenerator = map pairOfExpressionsToPlusExpression (pair expressionGenerator expressionGenerator)
+
+    pairOfExpressionsToMinusExpression : (Expression, Expression) -> Expression
+    pairOfExpressionsToMinusExpression (left, right) = Minus left right
+
+    minusGenerator : Generator Expression
+    minusGenerator = map pairOfExpressionsToMinusExpression (pair expressionGenerator expressionGenerator)
+
+    pairOfExpressionsToMultiplyExpression : (Expression, Expression) -> Expression
+    pairOfExpressionsToMultiplyExpression (left, right) = Multiply left right
+
+    multiplyGenerator : Generator Expression
+    multiplyGenerator = map pairOfExpressionsToMultiplyExpression (pair expressionGenerator expressionGenerator)
+
+    pairOfExpressionsToDivideExpression : (Expression, Expression) -> Expression
+    pairOfExpressionsToDivideExpression (left, right) = Divide left right
+
+    divideGenerator : Generator Expression
+    divideGenerator = map pairOfExpressionsToDivideExpression (pair expressionGenerator expressionGenerator)
+
+    selectExpressionGenerator : Int -> Generator Expression
+    selectExpressionGenerator n =
+      case n of
+        1 -> divideGenerator
+
+        2 -> multiplyGenerator
+
+        3 -> minusGenerator
+
+        4 -> plusGenerator
+
+        5 -> sensorExpressionGenerator
+
+        _ -> constantGenerator
+  in
+    (int 1 10) `andThen` selectExpressionGenerator
 
 
 intToSensor : Int -> Sensor
