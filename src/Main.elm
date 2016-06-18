@@ -1,7 +1,8 @@
 module Ast exposing (..)
 
-import Html exposing (Html, text)
+import Html exposing (Html, text, div, button)
 import Html.App exposing (beginnerProgram)
+import Html.Events exposing (onClick)
 import Random exposing (Generator, Seed, step, initialSeed, map, int, float, pair, andThen)
 
 main =
@@ -184,11 +185,19 @@ model = init 0
 
 
 type Message =
-  DoNothing
+    CreateRandomExpression
+  | DoNothing
 
 update : Message -> Model -> Model
 update message model =
   case message of
+    CreateRandomExpression ->
+      let
+        (command, seed') = step commandGenerator model.seed
+
+        program = Command command
+      in
+        { model | program = program, seed = seed' }
     _ -> model
 
 
@@ -197,4 +206,7 @@ update message model =
 
 view : Model -> Html Message
 view model =
-  text (toString model.program)
+  div [] [
+    button [ onClick CreateRandomExpression ] [ text "go" ]
+  , text (toString model.program)
+  ]
