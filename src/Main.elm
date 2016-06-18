@@ -115,42 +115,44 @@ expressionGenerator =
     (int 1 10) `andThen` selectExpressionGenerator
 
 
-intToSensor : Int -> Sensor
-intToSensor n =
-  case n of
-    1 -> X
-
-    2 -> Y
-
-    3 -> Vx
-
-    4 -> Vy
-
-    5 -> W
-
-    6 -> O
-
-    _ -> Fuel
-
-
 sensorGenerator : Generator Sensor
-sensorGenerator = map intToSensor (int 1 7)
+sensorGenerator =
+  let
+    intToSensor : Int -> Sensor
+    intToSensor n =
+      case n of
+        1 -> X
 
+        2 -> Y
 
-intToCommand : Int -> Command
-intToCommand n =
-  case n of
-    1 -> Left
+        3 -> Vx
 
-    2 -> Right
+        4 -> Vy
 
-    3 -> Thrust
+        5 -> W
 
-    _ -> Skip
+        6 -> O
+
+        _ -> Fuel
+  in
+    map intToSensor (int 1 7)
 
 
 commandGenerator : Generator Command
-commandGenerator = map intToCommand (int 1 4)
+commandGenerator =
+  let
+    intToCommand : Int -> Command
+    intToCommand n =
+      case n of
+        1 -> Left
+
+        2 -> Right
+
+        3 -> Thrust
+
+        _ -> Skip
+  in
+    map intToCommand (int 1 4)
 
 
 type alias Model =
