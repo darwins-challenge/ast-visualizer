@@ -22,8 +22,8 @@ type Program =
 
 
 type Condition =
-    True
-  | False
+    AlwaysTrue
+  | AlwaysFalse
   | Not Condition
   | Or Condition Condition
   | And Condition Condition
@@ -57,6 +57,49 @@ type Command =
   | Left
   | Right
   | Thrust
+
+
+conditionGenerator : Generator Condition
+conditionGenerator =
+  let
+    comparisonGeneratorFor comparison =
+      let
+        create : (Expression, Expression) -> Condition
+        create (left, right) = comparison left right
+      in
+        map create (pair expressionGenerator expressionGenerator)
+
+    logicalGeneratorFor operator =
+      let
+        create :  (Condition, Condition) -> Condition
+        create (left, right) = operator left right
+      in
+        map create (pair conditionGenerator conditionGenerator)
+
+    selectConditionGenerator : Int -> Generator Condition
+    selectConditionGenerator n =
+      case n of
+        1 -> (comparisonGeneratorFor Greater)
+
+        2 -> (comparisonGeneratorFor GreaterEqual)
+
+        3 -> (comparisonGeneratorFor Equal)
+
+        4 -> (comparisonGeneratorFor LessEqual)
+
+        5 -> (comparisonGeneratorFor Less)
+
+        7 -> (logicalGeneratorFor And)
+
+        8 -> (logicalGeneratorFor Or)
+
+        9 -> map (\condition -> Not condition) conditionGenerator
+
+        10 -> map (\_ -> AlwaysFalse) (int 0 1)
+
+        _  -> map (\_ -> AlwaysTrue) (int 0 1)
+  in
+    (int 1 10) `andThen` selectConditionGenerator
 
 
 expressionGenerator : Generator Expression
