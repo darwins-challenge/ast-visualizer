@@ -129,56 +129,28 @@ conditionGenerator =
 expressionGenerator : Generator Expression
 expressionGenerator =
   let
-    floatToConstant : Float -> Expression
-    floatToConstant f = Constant f
-
-    constantGenerator : Generator Expression
-    constantGenerator = map floatToConstant (float 0.0 1.0)
-
-    sensorToSensorExpression : Sensor -> Expression
-    sensorToSensorExpression sensor = Sensor sensor
-
-    sensorExpressionGenerator : Generator Expression
-    sensorExpressionGenerator = map sensorToSensorExpression sensorGenerator
-
-    pairOfExpressionsToPlusExpression : (Expression, Expression) -> Expression
-    pairOfExpressionsToPlusExpression (left, right) = Plus left right
-
-    plusGenerator : Generator Expression
-    plusGenerator = map pairOfExpressionsToPlusExpression (pair expressionGenerator expressionGenerator)
-
-    pairOfExpressionsToMinusExpression : (Expression, Expression) -> Expression
-    pairOfExpressionsToMinusExpression (left, right) = Minus left right
-
-    minusGenerator : Generator Expression
-    minusGenerator = map pairOfExpressionsToMinusExpression (pair expressionGenerator expressionGenerator)
-
-    pairOfExpressionsToMultiplyExpression : (Expression, Expression) -> Expression
-    pairOfExpressionsToMultiplyExpression (left, right) = Multiply left right
-
-    multiplyGenerator : Generator Expression
-    multiplyGenerator = map pairOfExpressionsToMultiplyExpression (pair expressionGenerator expressionGenerator)
-
-    pairOfExpressionsToDivideExpression : (Expression, Expression) -> Expression
-    pairOfExpressionsToDivideExpression (left, right) = Divide left right
-
-    divideGenerator : Generator Expression
-    divideGenerator = map pairOfExpressionsToDivideExpression (pair expressionGenerator expressionGenerator)
+    operatorExpressionFor operator =
+      let
+        pairOfExpressionToOperatorExpression : (Expression, Expression) -> Expression
+        pairOfExpressionToOperatorExpression (left, right) =
+          operator left right
+      in
+        map pairOfExpressionToOperatorExpression (pair expressionGenerator expressionGenerator)
 
     selectExpressionGenerator : Int -> Generator Expression
     selectExpressionGenerator n =
       case n of
-        1 -> divideGenerator
+        1 -> operatorExpressionFor Divide
 
-        2 -> multiplyGenerator
+        2 -> operatorExpressionFor Multiply
 
-        3 -> minusGenerator
+        3 -> operatorExpressionFor Minus
 
-        4 -> plusGenerator
+        4 -> operatorExpressionFor Plus
 
-        5 -> sensorExpressionGenerator
+        5 -> map (\sensor -> Sensor sensor) sensorGenerator
 
-        _ -> constantGenerator
+        _ -> map (\f -> Constant f) (float 0.0 1.0)
   in
     (int 1 10) `andThen` selectExpressionGenerator
 
