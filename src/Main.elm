@@ -113,17 +113,17 @@ conditionGenerator =
 
         5 -> (comparisonGeneratorFor Less)
 
-        7 -> (logicalGeneratorFor And)
+        6 -> (logicalGeneratorFor And)
 
-        8 -> (logicalGeneratorFor Or)
+        7 -> (logicalGeneratorFor Or)
 
-        9 -> map (\condition -> Not condition) conditionGenerator
+        8 -> map (\condition -> Not condition) conditionGenerator
 
-        10 -> map (\_ -> AlwaysFalse) (int 0 1)
+        9 -> map (\_ -> AlwaysFalse) (int 0 1)
 
         _  -> map (\_ -> AlwaysTrue) (int 0 1)
   in
-    (int 1 10) `andThen` selectConditionGenerator
+    (int 1 16) `andThen` selectConditionGenerator
 
 
 expressionGenerator : Generator Expression
@@ -224,6 +224,7 @@ model = init 0
 type Message =
     CreateRandomExpression
   | DoNothing
+
 
 update : Message -> Model -> Model
 update message model =
