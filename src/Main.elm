@@ -207,9 +207,7 @@ init n =
   let
     seed = initialSeed n
 
-    (command, seed') = step commandGenerator seed
-
-    program = Command command
+    (program, seed') = step programGenerator seed
   in
     {
       program = program
@@ -232,9 +230,7 @@ update message model =
   case message of
     CreateRandomExpression ->
       let
-        (command, seed') = step commandGenerator model.seed
-
-        program = Command command
+        (program, seed') = step programGenerator model.seed
       in
         { model | program = program, seed = seed' }
     _ -> model
