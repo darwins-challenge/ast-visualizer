@@ -244,5 +244,6 @@ view : Model -> Html Message
 view model =
   div [] [
     button [ onClick CreateRandomExpression ] [ text "go" ]
-  , text (toString model.program)
+  , text (toString model.seed)
+  , div [] [ text (toString model.program) ]
   ]
