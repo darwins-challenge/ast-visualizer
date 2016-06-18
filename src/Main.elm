@@ -5,6 +5,7 @@ import Html.App exposing (beginnerProgram)
 import Html.Events exposing (onClick)
 import Random exposing (Generator, Seed, step, initialSeed, map, int, float, pair, andThen)
 
+main : Platform.Program Never
 main =
   beginnerProgram
     {
