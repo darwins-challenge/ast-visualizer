@@ -4,6 +4,10 @@ import Html exposing (Html, text, div, button)
 import Html.App exposing (beginnerProgram)
 import Html.Events exposing (onClick)
 import Random exposing (Generator, Seed, step, initialSeed, map, map3, int, float, pair, andThen)
+import Ast.Types exposing (..)
+import Ast.Message exposing (Message, createRandomExpression)
+import Ast.Svg exposing (programAsSvg)
+
 
 main : Platform.Program Never
 main =
@@ -17,63 +21,20 @@ main =
 
 -- MODEL
 
-type Program =
-    If Condition Program Program
-  | Command Command
-
-
-type Condition =
-    AlwaysTrue
-  | AlwaysFalse
-  | Not Condition
-  | Or Condition Condition
-  | And Condition Condition
-  | Less Expression Expression
-  | LessEqual Expression Expression
-  | Equal Expression Expression
-  | GreaterEqual Expression Expression
-  | Greater Expression Expression
-
-
-type Expression =
-    Constant Float
-  | Sensor Sensor
-  | Plus Expression Expression
-  | Minus Expression Expression
-  | Multiply Expression Expression
-  | Divide Expression Expression
-
-type Sensor =
-    X
-  | Y
-  | Vx
-  | Vy
-  | O
-  | W
-  | Fuel
-
-
-type Command =
-    Skip
-  | Left
-  | Right
-  | Thrust
-
-
-programGenerator : Generator Program
+programGenerator : Generator Ast.Types.Program
 programGenerator =
   let
-    ifGenerator : Generator Program
+    ifGenerator : Generator Ast.Types.Program
     ifGenerator =
       let
-        create : Condition -> Program -> Program -> Program
+        create : Condition -> Ast.Types.Program -> Ast.Types.Program -> Ast.Types.Program
         create condition left right =
           If condition left right
       in
         map3 create conditionGenerator programGenerator programGenerator
 
 
-    selectProgramGenerator : Int -> Generator Program
+    selectProgramGenerator : Int -> Generator Ast.Types.Program
     selectProgramGenerator n =
       case n of
         1 -> ifGenerator
@@ -197,7 +158,7 @@ commandGenerator =
 
 type alias Model =
   {
-    program : Program
+    program : Ast.Types.Program
   , seed : Seed
   }
 
@@ -207,7 +168,7 @@ init n =
   let
     seed = initialSeed n
 
-    (program, seed') = step programGenerator seed
+    (program, seed') = (If (Not AlwaysFalse) (Command Thrust) (If (AlwaysTrue) (Command Skip) (Command Left)), seed)
   in
     {
       program = program
@@ -221,20 +182,14 @@ model = init 0
 -- UPDATE
 
 
-type Message =
-    CreateRandomExpression
-  | DoNothing
-
-
 update : Message -> Model -> Model
 update message model =
   case message of
-    CreateRandomExpression ->
+    createRandomExpression ->
       let
         (program, seed') = step programGenerator model.seed
       in
         { model | program = program, seed = seed' }
-    _ -> model
 
 
 -- VIEW
@@ -243,7 +198,7 @@ update message model =
 view : Model -> Html Message
 view model =
   div [] [
-    button [ onClick CreateRandomExpression ] [ text "go" ]
+    button [ onClick createRandomExpression ] [ text "go" ]
   , text (toString model.seed)
-  , div [] [ text (toString model.program) ]
+  , div [] [ programAsSvg model.program ]
   ]
