@@ -36,13 +36,13 @@ asSvg boundingBox =
         ] []
 
 
-make_bbox : Int -> Int -> Int -> Int -> BoundingBox
-make_bbox x y width height =
+makeBbox : Int -> Int -> Int -> Int -> BoundingBox
+makeBbox x y width height =
   { x = x, y = y, width = width, height = height }
 
 
 bbox : Ast.Types.Program -> BoundingBox
 bbox program =
   case program of
-    If condition left right -> make_bbox 0 0 100 200
-    Command command -> make_bbox 100 0 100 200
+    If condition left right -> makeBbox 0 0 100 200
+    Command command -> makeBbox 100 0 100 200
